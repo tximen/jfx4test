@@ -16,13 +16,13 @@ public class LabelAssertionTest {
         Label label = new Label();
         label.setId("sample");
         label.setText("unit test");
-
         stage.setScene(new Scene(new StackPane(label), 100, 100));
         stage.show();
     }
 
     @Test
     void sample_label() {
-        FxAssertions.assertLabelById("sample").hasText("unit test");
+        FxAssertions.assertLabeledById("sample").hasText("unit test");
     }
+
 }

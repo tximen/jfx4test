@@ -1,14 +1,10 @@
 package com.jfx4test.framework.robot;
-import java.util.Objects;
-
-import com.jfx4test.framework.robot.Motion;
-import com.jfx4test.framework.robot.MouseRobot;
-import com.jfx4test.framework.robot.MoveRobot;
-import com.jfx4test.framework.robot.SleepRobot;
-import javafx.scene.input.MouseButton;
-
 
 import com.jfx4test.framework.service.query.PointQuery;
+import javafx.scene.input.MouseButton;
+
+import java.util.Objects;
+
 public class ClickRobot {
 
     private static final long SLEEP_AFTER_DOUBLE_CLICK_IN_MILLIS = 50;
@@ -26,18 +22,15 @@ public class ClickRobot {
         this.sleepRobot = sleepRobot;
     }
 
-
     public void clickOn(MouseButton... buttons) {
-        mouseRobot.pressNoWait(buttons);
-        mouseRobot.release(buttons);
+         mouseRobot.pressNoWait(buttons);
+         mouseRobot.release(buttons);
     }
 
-
-    public void clickOn(PointQuery pointQuery, com.jfx4test.framework.robot.Motion motion, MouseButton... buttons) {
+    public void clickOn(PointQuery pointQuery, Motion motion, MouseButton... buttons) {
         moveRobot.moveTo(pointQuery, motion);
         clickOn(buttons);
     }
-
 
     public void doubleClickOn(MouseButton... buttons) {
         clickOn(buttons);

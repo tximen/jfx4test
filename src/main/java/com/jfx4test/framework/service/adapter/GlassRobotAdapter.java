@@ -1,6 +1,5 @@
 package com.jfx4test.framework.service.adapter;
 
-
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -10,7 +9,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
 
 import static com.jfx4test.framework.util.WaitForAsyncUtils.asyncFx;
+import static com.jfx4test.framework.util.WaitForAsyncUtils.runOnFxThread;
 import static com.jfx4test.framework.util.WaitForAsyncUtils.waitForAsyncFx;
+
 /**
  * since we use javafx 25 the Robot class is available
  */
@@ -19,7 +20,11 @@ public class GlassRobotAdapter implements RobotAdapter<Robot> {
     private static final int RETRIEVAL_TIMEOUT_IN_MILLIS = 10_000;
     private Robot glassRobot;
 
-
+    private void validateRobot() {
+        if (this.glassRobot == null) {
+            runOnFxThread(this::robotCreate);
+        }
+    }
 
     @Override
     public void robotCreate() {
@@ -43,10 +48,12 @@ public class GlassRobotAdapter implements RobotAdapter<Robot> {
 
     @Override
     public Point2D getMouseLocation() {
+        validateRobot();
         return waitForAsyncFx(RETRIEVAL_TIMEOUT_IN_MILLIS, this::createPoint);
     }
 
     private Point2D createPoint() {
+        validateRobot();
         return  new Point2D(this.glassRobot.getMouseX(), this.glassRobot.getMouseY());
     }
 
@@ -58,12 +65,12 @@ public class GlassRobotAdapter implements RobotAdapter<Robot> {
 
     @Override
     public void mousePress(MouseButton button) {
-        this.glassRobot.mousePress(button);
+        runOnFxThread(() ->  this.glassRobot.mousePress(button));
     }
 
     @Override
     public void mouseRelease(MouseButton button) {
-        this.glassRobot.mouseRelease(button);
+        runOnFxThread(() -> this.glassRobot.mouseRelease(button));
     }
 
     @Override

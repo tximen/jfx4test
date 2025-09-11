@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 public class NoSuchLabelSupplier implements Supplier<String> {
 
+    private static final String SEPERATOR = "\n     ";
+
     private final String nodeId;
 
     public NoSuchLabelSupplier(String nodeId) {
@@ -17,10 +19,12 @@ public class NoSuchLabelSupplier implements Supplier<String> {
     @Override
     public String get() {
         return """
-           ** no such node **
-              id=%s
-              available nodes
-              %s""".formatted(this.nodeId,  findAllNodes().stream().map(this::nodeInfo).collect(Collectors.joining("\n")));
+                ** no such node **
+                   id=%s
+                   available nodes {
+                     %s
+                   }""".formatted(this.nodeId, findAllNodes().stream().map(this::nodeInfo).collect(Collectors.joining(SEPERATOR)));
+
     }
 
     private String nodeInfo(Node node) {

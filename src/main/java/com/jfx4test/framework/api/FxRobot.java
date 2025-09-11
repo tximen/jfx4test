@@ -1,20 +1,12 @@
 package com.jfx4test.framework.api;
 
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import com.jfx4test.framework.api.FxRobotContext;
-import com.jfx4test.framework.api.FxRobotException;
+import com.jfx4test.framework.robot.Motion;
+import com.jfx4test.framework.service.locator.PointLocator;
+import com.jfx4test.framework.service.query.BoundsQuery;
+import com.jfx4test.framework.service.query.NodeQuery;
+import com.jfx4test.framework.service.query.PointQuery;
+import com.jfx4test.framework.service.support.Capture;
+import com.jfx4test.framework.util.BoundsQueryUtils;
 import javafx.geometry.Bounds;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
@@ -29,20 +21,23 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Window;
 
-
-import com.jfx4test.framework.robot.Motion;
-import com.jfx4test.framework.service.locator.PointLocator;
-import com.jfx4test.framework.service.query.BoundsQuery;
-import com.jfx4test.framework.service.query.NodeQuery;
-import com.jfx4test.framework.service.query.PointQuery;
-import com.jfx4test.framework.service.support.Capture;
-import com.jfx4test.framework.util.BoundsQueryUtils;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static com.jfx4test.framework.util.NodeQueryUtils.isVisible;
 import static com.jfx4test.framework.util.WaitForAsyncUtils.asyncFx;
 import static com.jfx4test.framework.util.WaitForAsyncUtils.waitFor;
 import static com.jfx4test.framework.util.WaitForAsyncUtils.waitForFxEvents;
-
 
 public class FxRobot {
 
@@ -262,6 +257,7 @@ public class FxRobot {
 
 
     public PointQuery point(Node node) {
+
         PointLocator pointLocator = context.getPointLocator();
         Pos pointPosition = context.getPointPosition();
         targetWindow(node.getScene().getWindow());

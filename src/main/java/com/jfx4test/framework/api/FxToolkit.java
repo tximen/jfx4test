@@ -1,19 +1,7 @@
 package com.jfx4test.framework.api;
 
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
-import com.jfx4test.framework.api.FxRobot;
-import com.jfx4test.framework.api.FxToolkitContext;
+import com.jfx4test.framework.toolkit.ApplicationLauncher;
+import com.jfx4test.framework.toolkit.ApplicationService;
 import com.jfx4test.framework.toolkit.ToolkitService;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -24,14 +12,18 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import javafx.scene.input.KeyCode;
-import javafx.stage.Screen;
-
-import com.jfx4test.framework.toolkit.ApplicationLauncher;
-import com.jfx4test.framework.toolkit.ApplicationService;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.jfx4test.framework.util.WaitForAsyncUtils.waitFor;
 import static com.jfx4test.framework.util.WaitForAsyncUtils.waitForFxEvents;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Responsible for setup and cleanup of JavaFX fixtures that need the JavaFX thread.
@@ -91,7 +83,6 @@ public final class FxToolkit {
     static final String UNSUPPORTED_OPERATION_ERROR_MESSAGE = "Internal Error";
     static final String UNSUPPORTED_OPERATION_CALLING_CLASS = "com.sun.glass.ui.gtk.GtkApplication";
     static final String MISSING_LIBGTK_3_0_USER_MESSAGE = "Package libgtk-3-0 probably not installed";
-
 
     private FxToolkit() {}
 
@@ -246,8 +237,8 @@ public final class FxToolkit {
     }
 
     private static void hideWindows() {
-        System.err.println("hideWindows: not implemented");
-       // Window.getWindows().forEach(Window::hide);
+
+
     }
 
     /**

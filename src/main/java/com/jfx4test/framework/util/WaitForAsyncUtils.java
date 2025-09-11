@@ -518,7 +518,7 @@ public final class WaitForAsyncUtils {
         }
     }
 
-    private static void runOnFxThread(Runnable runnable) {
+    public static void runOnFxThread(Runnable runnable) {
         if (Platform.isFxApplicationThread()) {
             runnable.run();
         } else {
@@ -561,7 +561,7 @@ public final class WaitForAsyncUtils {
             out.append("--- Trace of caller of unhandled exception in Async Thread ---\n");
             out.append(printTrace(trace));
         }
-        System.err.println(out.toString());
+        System.err.println(out);
     }
 
     /**
@@ -580,24 +580,15 @@ public final class WaitForAsyncUtils {
 
     private static ChronoUnit chronoUnit(TimeUnit unit) {
         Objects.requireNonNull(unit, "unit");
-        switch (unit) {
-            case NANOSECONDS:
-                return ChronoUnit.NANOS;
-            case MICROSECONDS:
-                return ChronoUnit.MICROS;
-            case MILLISECONDS:
-                return ChronoUnit.MILLIS;
-            case SECONDS:
-                return ChronoUnit.SECONDS;
-            case MINUTES:
-                return ChronoUnit.MINUTES;
-            case HOURS:
-                return ChronoUnit.HOURS;
-            case DAYS:
-                return ChronoUnit.DAYS;
-            default:
-                throw new IllegalArgumentException("unknown TimeUnit constant: " + unit);
-        }
+        return switch (unit) {
+            case NANOSECONDS  -> ChronoUnit.NANOS;
+            case MICROSECONDS -> ChronoUnit.MICROS;
+            case MILLISECONDS -> ChronoUnit.MILLIS;
+            case SECONDS      -> ChronoUnit.SECONDS;
+            case MINUTES      -> ChronoUnit.MINUTES;
+            case HOURS         -> ChronoUnit.HOURS;
+            case DAYS          -> ChronoUnit.DAYS;
+        };
     }
 
     /**
@@ -700,8 +691,7 @@ public final class WaitForAsyncUtils {
                 throws InterruptedException, ExecutionException, TimeoutException {
             try {
                 return super.get(timeout, unit);
-            }
-            catch (Exception e) { // exception is thrown to caller, so remove it from stack
+            } catch (Exception e) { // exception is thrown to caller, so remove it from stack
                 if (exception != null) {
                     EXCEPTIONS.remove(exception);
                     exception = null;
