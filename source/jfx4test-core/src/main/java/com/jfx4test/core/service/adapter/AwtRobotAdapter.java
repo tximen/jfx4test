@@ -1,9 +1,9 @@
-package com.jfx4test.core.service.adapter;
+package com.jfx4test.framework.service.adapter;
 
 
-import com.jfx4test.core.api.FxToolkit;
-import com.jfx4test.core.internal.OS;
-import com.jfx4test.core.internal.PlatformAdapter;
+import com.jfx4test.framework.internal.OS;
+import com.jfx4test.framework.internal.PlatformAdapter;
+import com.jfx4test.framework.util.WindowUtil;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -43,7 +43,7 @@ public class AwtRobotAdapter implements RobotAdapter<Robot> {
         if (key == KeyCode.COMMAND) {
             key = KeyCode.META;
         }
-        useRobot().keyPress(FxToolkit.convertToKeyCodeId(key));
+        useRobot().keyPress(WindowUtil.convertToKeyCodeId(key));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class AwtRobotAdapter implements RobotAdapter<Robot> {
         if (key == KeyCode.COMMAND) {
             key = KeyCode.META;
         }
-        useRobot().keyRelease(FxToolkit.convertToKeyCodeId(key));
+        useRobot().keyRelease(WindowUtil.convertToKeyCodeId(key));
     }
 
     @Override
@@ -154,8 +154,8 @@ public class AwtRobotAdapter implements RobotAdapter<Robot> {
         if (!scaleRequired()) {
             return rect;
         }
-        double factorX = FxToolkit.getScreenScaleX();
-        double factorY = FxToolkit.getScreenScaleY();
+        double factorX = WindowUtil.getScreenScaleX();
+        double factorY = WindowUtil.getScreenScaleY();
         return new Rectangle2D(rect.getMinX() * factorX, rect.getMinY() * factorY, rect.getWidth() * factorX,
                 rect.getHeight() * factorY);
     }
@@ -165,13 +165,13 @@ public class AwtRobotAdapter implements RobotAdapter<Robot> {
         if (!scaleRequired()) {
             return pt;
         }
-        double factorX =  FxToolkit.getScreenScaleX();
-        double factorY = FxToolkit.getScreenScaleY();
+        double factorX =  WindowUtil.getScreenScaleX();
+        double factorY = WindowUtil.getScreenScaleY();
         return new Point2D(pt.getX() / factorX, pt.getY() / factorY);
     }
 
     private boolean scaleRequired() {
-        if ( FxToolkit.getScreenScaleX() == 1.0 && FxToolkit.getScreenScaleY() == 1.0) {
+        if (WindowUtil.getScreenScaleX() == 1.0 && WindowUtil.getScreenScaleY() == 1.0) {
             // Just to prevent unnecessary computations.
             return false;
         } else {

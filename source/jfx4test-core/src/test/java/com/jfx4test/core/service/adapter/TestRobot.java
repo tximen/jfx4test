@@ -1,4 +1,4 @@
-package com.jfx4test.core.service.adapter;
+package com.jfx4test.framework.service.adapter;
 
 
 import org.junit.jupiter.api.Test;

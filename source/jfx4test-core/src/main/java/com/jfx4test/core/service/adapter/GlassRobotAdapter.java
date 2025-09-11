@@ -1,4 +1,4 @@
-package com.jfx4test.core.service.adapter;
+package com.jfx4test.framework.service.adapter;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -8,8 +8,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
 
-import static com.jfx4test.core.util.WaitForAsyncUtils.asyncFx;
-import static com.jfx4test.core.util.WaitForAsyncUtils.waitForAsyncFx;
+import static com.jfx4test.framework.util.WaitForAsyncUtils.asyncFx;
+import static com.jfx4test.framework.util.WaitForAsyncUtils.waitForAsyncFx;
 /**
  * since we use javafx 25 the Robot class is available
  */

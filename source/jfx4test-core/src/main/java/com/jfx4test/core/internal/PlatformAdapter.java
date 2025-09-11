@@ -1,4 +1,4 @@
-package com.jfx4test.core.internal;
+package com.jfx4test.framework.internal;
 
 import java.util.Locale;
 
