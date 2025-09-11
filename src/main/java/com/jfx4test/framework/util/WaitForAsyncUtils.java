@@ -69,7 +69,7 @@ public final class WaitForAsyncUtils {
     private static final long SEMAPHORE_SLEEP_IN_MILLIS = 10;
     private static final int SEMAPHORE_LOOPS_COUNT = 5;
     private static final String PAINT_COLLECTOR = "com.sun.javafx.tk.quantum.PaintCollector";
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(new DefaultThreadFactory());
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newVirtualThreadPerTaskExecutor();
     private static final Queue<Throwable> EXCEPTIONS = new ConcurrentLinkedQueue<>();
 
     /**
@@ -256,12 +256,10 @@ public final class WaitForAsyncUtils {
     public static <T> T waitFor(Future<T> future) {
         try {
             return future.get();
-        }
-        catch (ExecutionException exception) {
+        } catch (ExecutionException exception) {
             // if the computation threw an exception.
             throw new RuntimeException(exception.getCause());
-        }
-        catch (InterruptedException ignore) {
+        } catch (InterruptedException ignore) {
             // if the current thread was interrupted while waiting.
             return null;
         }
@@ -281,12 +279,10 @@ public final class WaitForAsyncUtils {
     public static <T> T waitFor(long timeout, TimeUnit timeUnit, Future<T> future) throws TimeoutException {
         try {
             return future.get(timeout, timeUnit);
-        }
-        catch (ExecutionException exception) {
+        } catch (ExecutionException exception) {
             // if the computation threw an exception.
             throw new RuntimeException(exception.getCause());
-        }
-        catch (InterruptedException ignore) {
+        } catch (InterruptedException ignore) {
             // if the current thread was interrupted while waiting.
             return null;
         }
@@ -512,8 +508,7 @@ public final class WaitForAsyncUtils {
         try {
             // exceptions are thrown on current thread
             return waitFor(millis, MILLISECONDS, future);
-        }
-        catch (TimeoutException exception) {
+        } catch (TimeoutException exception) {
             throw new RuntimeException(exception);
         }
     }
@@ -529,8 +524,7 @@ public final class WaitForAsyncUtils {
     private static boolean callConditionAndReturnResult(Callable<Boolean> condition) {
         try {
             return condition.call();
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
     }
@@ -540,17 +534,16 @@ public final class WaitForAsyncUtils {
         runOnFxThread(semaphore::release);
         try {
             semaphore.acquire();
-        }
-        catch (InterruptedException ignore) {
+        } catch (InterruptedException ignore) {
         }
     }
 
-    private static void printException(Throwable e, StackTraceElement[] trace) {
+    private static void printException(Throwable exception, StackTraceElement[] trace) {
         StringBuilder out = new StringBuilder("--- Exception in Async Thread ---\n");
-        out.append(e.getClass().getName()).append(": ").append(e.getMessage()).append('\n');
-        StackTraceElement[] st = e.getStackTrace();
+        out.append(exception.getClass().getName()).append(": ").append(exception.getMessage()).append('\n');
+        StackTraceElement[] st = exception.getStackTrace();
         out.append(printTrace(st));
-        Throwable cause = e.getCause();
+        Throwable cause = exception.getCause();
         while (cause != null) {
             out.append(cause.getClass().getName()).append(": ").append(cause.getMessage()).append('\n');
             st = cause.getStackTrace();
