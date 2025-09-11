@@ -23,10 +23,6 @@ public class LabelAssertionTest {
 
     @Test
     void sample_label() {
-        System.out.println("test: "  + FxAssertions.assertLabelById("sample"));
-
-
-        // expect:
-        //   assertThat(".button", hasText("click me!"));
+        FxAssertions.assertLabelById("sample").hasText("unit test");
     }
 }
