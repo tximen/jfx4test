@@ -1,6 +1,4 @@
-package com.jfx4test.framework.junit;
-import com.jfx4test.framework.fxml.FxmlFactoryException;
-import com.jfx4test.framework.fxml.FxmlSourceMissingException;
+package com.jfx4test.framework.fxml;
 import com.jfx4test.framework.util.ApplicationFixture;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,10 +18,10 @@ public class ApplicationFxmlFixture extends ApplicationFixture {
     private static final Logger LOGGER = Logger.getLogger("com.jfx4test.framework.fxml.FxmlApplicationFixture");
 
 
-    private final FxmlSource fxmlSource;
+    private final FxmlConfig fxmlSource;
     private final Callback<Class<?>, Object> controllerFactory;
 
-    public ApplicationFxmlFixture(Object testInstance, FxmlSource fxmlSource, Callback<Class<?>, Object> controllerFactory,
+    public ApplicationFxmlFixture(Object testInstance, FxmlConfig fxmlSource, Callback<Class<?>, Object> controllerFactory,
                                   List<Method> init, List<Method> stop) {
         super(testInstance, init, stop);
         this.fxmlSource = fxmlSource;
@@ -41,15 +39,15 @@ public class ApplicationFxmlFixture extends ApplicationFixture {
             if (exception.getCause() instanceof FxmlFactoryException factoryException) {
                 throw factoryException;
             } else {
-                throw new UncheckedIOException("cannot create view %s".formatted(this.fxmlSource.value()), exception);
+                throw new UncheckedIOException("cannot create view %s".formatted(this.fxmlSource.sourcePath()), exception);
             }
         }
     }
 
     private URL findFxmlResource() {
-        URL resource =  this.testInstance.getClass().getClassLoader().getResource(this.fxmlSource.value());
+        URL resource =  this.testInstance.getClass().getClassLoader().getResource(this.fxmlSource.sourcePath());
         if (resource == null) {
-            throw new FxmlSourceMissingException("no such fxml resource [%s]".formatted(this.fxmlSource.value()));
+            throw new FxmlSourceMissingException("no such fxml resource [%s]".formatted(this.fxmlSource.sourcePath()));
         } else {
             LOGGER.info("use fxml %s".formatted(resource.getFile()));
             return resource;

@@ -3,6 +3,8 @@ package com.jfx4test.framework.junit;
 import com.jfx4test.framework.api.FxRobot;
 import com.jfx4test.framework.api.FxToolkit;
 
+import com.jfx4test.framework.fxml.ApplicationFxmlFixture;
+import com.jfx4test.framework.fxml.FxmlConfig;
 import com.jfx4test.framework.fxml.FxmlFieldControllerFactory;
 import com.jfx4test.framework.fxml.FxmlMethodControllerFactory;
 import com.jfx4test.framework.fxml.FxmlSimpleMethodFactory;
@@ -10,7 +12,6 @@ import com.jfx4test.framework.util.ApplicationAdapter;
 import com.jfx4test.framework.util.ApplicationFixture;
 import com.jfx4test.framework.util.WaitForAsyncUtils;
 import javafx.util.Callback;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -41,10 +42,11 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
         this.applicationFixture = createApplicationFixture(testInstance);
         copyFields(testInstance);
+
     }
 
     private ApplicationFixture createApplicationFixture(Object testInstance) {
-        Optional<FxmlSource> fxmlSource = findFxmlSource(testInstance);
+        Optional<FxmlConfig> fxmlSource = findFxmlSource(testInstance);
         if (fxmlSource.isPresent()) {
             return createApplicationFxmlFixture(testInstance, fxmlSource.get());
         } else {
@@ -61,7 +63,7 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
                findMethods(testClass, this::validateStopMethod));
     }
 
-    private ApplicationFxmlFixture createApplicationFxmlFixture(Object testInstance, FxmlSource fxmlSource) {
+    private ApplicationFxmlFixture createApplicationFxmlFixture(Object testInstance, FxmlConfig fxmlSource) {
         Class<?> testClass = testInstance.getClass();
         return new ApplicationFxmlFixture(
                 testInstance,
@@ -109,13 +111,22 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
 
     }
 
-    private Optional<FxmlSource> findFxmlSource(Object testInstance) {
+    private Optional<FxmlConfig> findFxmlSource(Object testInstance) {
         Class<?> testClass = testInstance.getClass();
         if (testClass.isAnnotationPresent(FxmlSource.class)) {
             FxmlSource source = testClass.getAnnotation(FxmlSource.class);
             LOGGER.fine("fxml source %s".formatted(source.value()));
-            return Optional.of(source);
-        } else {
+            return Optional.of(new FxmlConfig(source.value(), source.width(), source.height()));
+        } else
+        if (testClass.isAnnotationPresent(ApplicationTest.class)) {
+            ApplicationTest source = testClass.getAnnotation(ApplicationTest.class);
+            if (source.value() == null || source.value().trim().isEmpty()) {
+                return Optional.empty();
+            } else {
+                LOGGER.fine("fxml source %s".formatted(source.value()));
+                return Optional.of(new FxmlConfig(source.value(), source.width(), source.height()));
+            }
+        } else  {
             return Optional.empty();
         }
     }
@@ -240,7 +251,7 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
     }
 
     @Override
-    public @Nullable Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return this;
     }
 

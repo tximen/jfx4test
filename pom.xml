@@ -11,8 +11,22 @@
 
   <properties>
         <java.version>25</java.version>
+        <!-- be compliant with the latest spring boot version -->
+        <spring.boot.version>4.0.0-M2</spring.boot.version>
         <javafx.version>25-ea+28</javafx.version>
   </properties>
+
+  <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+  </dependencyManagement>
 
   <dependencies>
      <!-- Java FX -->
@@ -44,12 +58,10 @@
      <dependency>
          <groupId>org.junit.jupiter</groupId>
          <artifactId>junit-jupiter-engine</artifactId>
-         <version>6.0.0-RC2</version>
      </dependency>
      <dependency>
          <groupId>org.assertj</groupId>
          <artifactId>assertj-core</artifactId>
-         <version>4.0.0-M1</version>
      </dependency>
   </dependencies>
 
