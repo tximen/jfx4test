@@ -3,7 +3,9 @@ package com.jfx4test.framework.junit;
 import com.jfx4test.framework.api.FxRobot;
 import com.jfx4test.framework.api.FxToolkit;
 
+import com.jfx4test.framework.fxml.FxmlFieldControllerFactory;
 import com.jfx4test.framework.fxml.FxmlMethodControllerFactory;
+import com.jfx4test.framework.fxml.FxmlSimpleMethodFactory;
 import com.jfx4test.framework.util.ApplicationAdapter;
 import com.jfx4test.framework.util.ApplicationFixture;
 import com.jfx4test.framework.util.WaitForAsyncUtils;
@@ -48,7 +50,6 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
         } else {
            return createApplicationPlainFixture(testInstance);
         }
-
     }
 
     private ApplicationPlainFixture createApplicationPlainFixture(Object testInstance) {
@@ -121,10 +122,25 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
 
 
     private Callback<Class<?>, Object> createControllerFactory(Class<?> testClass, Object testInstance) {
-        Optional<Method> factoryMethod = findControllerFactory(testClass);
+        Optional<Field> factoryField =
+                Arrays.stream(testClass.getDeclaredFields()).filter(this::controllerField).findFirst();
+        if (factoryField.isPresent()) {
+            Field field = factoryField.get();
+            LOGGER.info("use controller field %s.%s".formatted(testClass.getSimpleName(), field.getName()));
+            return new FxmlFieldControllerFactory(testInstance, field);
+        }
+        Optional<Method> factoryMethod =
+                Arrays.stream(testClass.getDeclaredMethods()).filter(this::controllerMethod).findFirst();
         if (factoryMethod.isPresent()) {
             Method caller = factoryMethod.get();
-            LOGGER.info("use controller %s".formatted(caller.getName()));
+            LOGGER.info("use factory %s".formatted(caller.getName()));
+            return new FxmlSimpleMethodFactory(testInstance, caller);
+        }
+        factoryMethod =
+           Arrays.stream(testClass.getDeclaredMethods()).filter(this::controllerFactory).findFirst();
+        if (factoryMethod.isPresent()) {
+            Method caller = factoryMethod.get();
+            LOGGER.info("use factory %s".formatted(caller.getName()));
             return new FxmlMethodControllerFactory(testInstance, caller);
         } else {
             LOGGER.info("use default controller factory");
@@ -133,33 +149,34 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
     }
 
 
-    private Optional<Method> findControllerFactory(Class<?> testClass) {
-        return Arrays.stream(testClass.getDeclaredMethods()).filter(this::controllerFactory).findFirst();
+    private boolean controllerField(Field field) {
+        return field.isAnnotationPresent(FxmlController.class);
     }
 
 
     private boolean controllerFactory(Method method) {
         return method.isAnnotationPresent(FxmlControllerFactory.class)
-                && factoryMethodValid(method);
+            && factoryMethodValid(method);
 
     }
 
+    private boolean controllerMethod(Method method) {
+        return method.isAnnotationPresent(FxmlController.class);
+    }
 
     private boolean factoryMethodValid(Method method) {
         if (Object.class.equals(method.getReturnType())
-                && method.getParameterCount() == 1
-                && Class.class.equals(method.getParameters()[0].getType())) {
+            && method.getParameterCount() == 1
+            && Class.class.equals(method.getParameters()[0].getType())) {
             return true;
         } else {
-            LOGGER.fine("""
+            throw new IllegalStateException("""
                     invalid controller factory [%s %s(..)]
                     -- proposal --
                        Object %s(Class<?> reference) {
                           ...
                        }""".formatted(method.getReturnType().getSimpleName(), method.getName(), method.getName()));
         }
-
-        return false;
     }
 
     public Object createInstance(Class<?> refClass) {
