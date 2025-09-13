@@ -10,6 +10,6 @@ import static java.lang.annotation.ElementType.METHOD;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(METHOD)
-public @interface ControllerFactory {
+public @interface FxmlControllerFactory {
 }
 

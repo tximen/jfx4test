@@ -3,6 +3,7 @@ package com.jfx4test.framework.api;
 import com.jfx4test.framework.robot.Motion;
 import com.jfx4test.framework.service.locator.PointLocator;
 import com.jfx4test.framework.service.query.BoundsQuery;
+import com.jfx4test.framework.service.query.NodeIdPredicate;
 import com.jfx4test.framework.service.query.NodeQuery;
 import com.jfx4test.framework.service.query.PointQuery;
 import com.jfx4test.framework.service.support.Capture;
@@ -532,6 +533,9 @@ public class FxRobot {
         return clickOn(query, Motion.DEFAULT, buttons);
     }
 
+    public FxRobot clickById(String nodeID, MouseButton... buttons) {
+        return clickOn(new NodeIdPredicate(nodeID), Motion.DEFAULT, buttons);
+    }
 
     public FxRobot clickOn(MouseButton... buttons) {
         context.getClickRobot().clickOn(buttons);

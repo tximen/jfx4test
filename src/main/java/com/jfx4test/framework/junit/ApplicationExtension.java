@@ -139,7 +139,7 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
 
 
     private boolean controllerFactory(Method method) {
-        return method.isAnnotationPresent(ControllerFactory.class)
+        return method.isAnnotationPresent(FxmlControllerFactory.class)
                 && factoryMethodValid(method);
 
     }

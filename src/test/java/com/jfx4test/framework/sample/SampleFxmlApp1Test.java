@@ -1,7 +1,7 @@
 package com.jfx4test.framework.sample;
 
 import com.jfx4test.framework.junit.ApplicationExtension;
-import com.jfx4test.framework.junit.ControllerFactory;
+import com.jfx4test.framework.junit.FxmlControllerFactory;
 import com.jfx4test.framework.junit.FxmlSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +16,7 @@ public class SampleFxmlApp1Test {
         System.err.println("looad");
     }
 
-    @ControllerFactory
+    @FxmlControllerFactory
     public Object controller(Class<?> reference) {
         if (SampleController.class.equals(reference)) {
             return new SampleController();
