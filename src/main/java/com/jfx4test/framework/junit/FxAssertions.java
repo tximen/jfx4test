@@ -1,5 +1,7 @@
-package com.jfx4test.framework.api;
+package com.jfx4test.framework.junit;
 
+import com.jfx4test.framework.api.FxApiFxApiContextHolder;
+import com.jfx4test.framework.api.NoSuchLabelSupplier;
 import com.jfx4test.framework.matcher.LabeledMatcher;
 import com.jfx4test.framework.service.query.NodeIdPredicate;
 import javafx.scene.Node;

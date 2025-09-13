@@ -1,4 +1,4 @@
-package com.jfx4test.framework.junit6;
+package com.jfx4test.framework.util;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

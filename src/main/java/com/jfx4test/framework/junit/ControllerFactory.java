@@ -1,5 +1,4 @@
-package com.jfx4test.framework.junit6;
-
+package com.jfx4test.framework.junit;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -11,4 +10,6 @@ import static java.lang.annotation.ElementType.METHOD;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(METHOD)
-public @interface Start { }
+public @interface ControllerFactory {
+}
+

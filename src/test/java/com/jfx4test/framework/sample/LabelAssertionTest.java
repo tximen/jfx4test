@@ -1,6 +1,8 @@
-package com.jfx4test.framework.junit6;
+package com.jfx4test.framework.sample;
 
-import com.jfx4test.framework.api.FxAssertions;
+import com.jfx4test.framework.junit.FxAssertions;
+
+import com.jfx4test.framework.junit.Start;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -8,7 +10,9 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(JavaFxApplicationExtension.class)
+import com.jfx4test.framework.junit.ApplicationExtension;
+
+@ExtendWith(ApplicationExtension.class)
 public class LabelAssertionTest {
 
     @Start
