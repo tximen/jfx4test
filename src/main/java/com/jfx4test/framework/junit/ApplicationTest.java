@@ -6,6 +6,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @Target({ElementType.TYPE})
@@ -19,4 +20,5 @@ public @interface ApplicationTest {
     double width()  default -1d;
     double height() default -1d;
     long   delayInSeconds() default -1L;
+    String[] stylesheet() default "";
 }

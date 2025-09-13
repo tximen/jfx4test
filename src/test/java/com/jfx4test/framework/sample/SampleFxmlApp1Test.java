@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ApplicationExtension.class)
-@FxmlSource("fxml/sample.fxml")
+@FxmlSource(value = "fxml/sample.fxml", stylesheet = "style/sample.css")
 public class SampleFxmlApp1Test {
 
     private final SampleController controller = new SampleController();

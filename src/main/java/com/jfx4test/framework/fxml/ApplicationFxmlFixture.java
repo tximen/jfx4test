@@ -1,5 +1,6 @@
 package com.jfx4test.framework.fxml;
 import com.jfx4test.framework.util.ApplicationFixture;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -29,14 +31,12 @@ public class ApplicationFxmlFixture extends ApplicationFixture {
 
     @Override
     public void start(Stage stage) {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(this.controllerFactory);
         try (InputStream fxmlStream = findFxmlResource().openStream()) {
-            if (this.fxmlSource.validWithAndHeight()) {
-                stage.setScene(new Scene(loader.load(fxmlStream), this.fxmlSource.width(), this.fxmlSource.height()));
-            } else {
-                stage.setScene(new Scene(loader.load(fxmlStream)));
+            Scene scene = createScene(fxmlStream);
+            if (Arrays.stream(this.fxmlSource.stylesheet()).anyMatch(this::validSheet)) {
+                addStyleSheets(scene);
             }
+            stage.setScene(scene);
             stage.show();
         } catch (IOException exception) {
             if (exception.getCause() instanceof FxmlFactoryException factoryException) {
@@ -44,6 +44,45 @@ public class ApplicationFxmlFixture extends ApplicationFixture {
             } else {
                 throw new UncheckedIOException("cannot create view %s".formatted(this.fxmlSource.sourcePath()), exception);
             }
+        }
+    }
+
+    private void addStyleSheets(Scene scene) {
+        ObservableList<String> styleSheets = scene.getStylesheets();
+        Arrays.stream(this.fxmlSource.stylesheet())
+              .filter(this::validSheet)
+              .map(this::convertToExternal)
+              .forEach(styleSheets::add);
+    }
+
+    private Scene createScene(InputStream fxmlStream) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setControllerFactory(this.controllerFactory);
+        if (this.fxmlSource.validWithAndHeight()) {
+           return new Scene(loader.load(fxmlStream), this.fxmlSource.width(), this.fxmlSource.height());
+        } else {
+            return new Scene(loader.load(fxmlStream));
+        }
+    }
+
+    private String convertToExternal(String sheetName) {
+        URL resource = this.testInstance.getClass().getClassLoader().getResource(sheetName);
+        String externalSheet = resource.toExternalForm();
+        LOGGER.info("add stylesheet %s".formatted(externalSheet));
+        return externalSheet;
+    }
+
+    private boolean validSheet(String sheetName) {
+        if (sheetName == null || sheetName.isBlank()) {
+            return false;
+        } else {
+           URL resource = this.testInstance.getClass().getClassLoader().getResource(sheetName);
+           if (resource == null) {
+               LOGGER.warning("no such style sheet %s".formatted(sheetName));
+               return false;
+           } else {
+               return true;
+           }
         }
     }
 

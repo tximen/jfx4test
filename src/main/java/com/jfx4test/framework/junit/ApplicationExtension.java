@@ -128,7 +128,7 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
         if (testClass.isAnnotationPresent(FxmlSource.class)) {
             FxmlSource source = testClass.getAnnotation(FxmlSource.class);
             LOGGER.fine("fxml source %s".formatted(source.value()));
-            return Optional.of(new FxmlConfig(source.value(), source.width(), source.height()));
+            return Optional.of(new FxmlConfig(source.value(),  source.stylesheet(), source.width(), source.height()));
         } else
         if (testClass.isAnnotationPresent(ApplicationTest.class)) {
             ApplicationTest source = testClass.getAnnotation(ApplicationTest.class);
@@ -136,7 +136,7 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
                 return Optional.empty();
             } else {
                 LOGGER.fine("fxml source %s".formatted(source.value()));
-                return Optional.of(new FxmlConfig(source.value(), source.width(), source.height()));
+                return Optional.of(new FxmlConfig(source.value(), source.stylesheet(), source.width(), source.height()));
             }
         } else  {
             return Optional.empty();

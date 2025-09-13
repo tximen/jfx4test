@@ -16,4 +16,5 @@ public @interface FxmlSource {
     double width()  default -1d;
     double height() default -1d;
     long   delayInSeconds() default -1L;
+    String[] stylesheet() default "";
 }
