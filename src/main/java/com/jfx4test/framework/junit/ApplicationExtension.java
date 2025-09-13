@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,15 +35,27 @@ import java.util.stream.Collectors;
 public class ApplicationExtension  extends FxRobot implements BeforeEachCallback, AfterEachCallback,
         TestInstancePostProcessor, ParameterResolver {
 
-    private static final Logger LOGGER = Logger.getLogger("com.jfx4test.framework.junit.ApplicationExtension");
+    private static final Logger LOGGER = Logger.getLogger(ApplicationExtension.class.getName());
 
     private ApplicationFixture applicationFixture;
+    private long delayInSeconds;
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
         this.applicationFixture = createApplicationFixture(testInstance);
+        this.delayInSeconds = findDelayInSeconds(testInstance);
         copyFields(testInstance);
+    }
 
+    private long findDelayInSeconds(Object testInstance) {
+        Class<?> testClass = testInstance.getClass();
+        if (testClass.isAnnotationPresent(FxmlSource.class)) {
+            return testClass.getAnnotation(FxmlSource.class).delayInSeconds();
+        } else if (testClass.isAnnotationPresent(ApplicationTest.class)) {
+            return testClass.getAnnotation(ApplicationTest.class).delayInSeconds();
+        } else {
+            return -1L;
+        }
     }
 
     private ApplicationFixture createApplicationFixture(Object testInstance) {
@@ -108,7 +121,6 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
         } else {
             return false;
         }
-
     }
 
     private Optional<FxmlConfig> findFxmlSource(Object testInstance) {
@@ -232,8 +244,13 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
             field.setAccessible(wasAccessible);
         }
     }
+
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
+        if (this.delayInSeconds > 0) {
+            LOGGER.info("wait for %d seconds".formatted(this.delayInSeconds));
+            WaitForAsyncUtils.sleep(this.delayInSeconds, TimeUnit.SECONDS);
+        }
         FxToolkit.cleanupAfterTest(this, new ApplicationAdapter(this.applicationFixture));
         // Required to wait for the end of the UI events processing
         WaitForAsyncUtils.waitForFxEvents();

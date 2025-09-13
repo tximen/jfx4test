@@ -1,7 +1,5 @@
 package com.jfx4test.framework.internal;
 
-import com.jfx4test.framework.internal.OS;
-
 import java.util.Locale;
 
 /**
@@ -13,9 +11,9 @@ public class PlatformAdapter {
      * Stores the operating system we are running on. Shouldn't change during
      * execution, so singleton.
      */
-    private static com.jfx4test.framework.internal.OS os;
+    private static OS os;
 
-    public static com.jfx4test.framework.internal.OS getOs() {
+    public static OS getOs() {
         if (os == null) {
             if (System.getProperty("os.name").toLowerCase(Locale.US).contains("nux")) {
                 os = com.jfx4test.framework.internal.OS.UNIX;

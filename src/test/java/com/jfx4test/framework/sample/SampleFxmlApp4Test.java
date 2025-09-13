@@ -6,7 +6,7 @@ import com.jfx4test.framework.junit.FxmlControllerFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-@ApplicationTest("fxml/sample.fxml")
+@ApplicationTest(value = "fxml/sample.fxml", delayInSeconds = 2)
 public class SampleFxmlApp4Test {
 
     private final SampleController controller = new SampleController();

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public @interface ApplicationTest {
 
     String value() default "";
-    double width()  default 100d;
-    double height() default 100d;
+    double width()  default -1d;
+    double height() default -1d;
+    long   delayInSeconds() default -1L;
 }

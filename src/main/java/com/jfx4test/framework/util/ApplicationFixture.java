@@ -25,6 +25,7 @@ public abstract class ApplicationFixture {
     public abstract void start(Stage stage) throws Exception;
 
     public final void stop()  {
+
         this.stop.forEach(this::call);
     }
 

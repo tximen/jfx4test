@@ -15,8 +15,7 @@ import java.util.logging.Logger;
 
 public class ApplicationFxmlFixture extends ApplicationFixture {
 
-    private static final Logger LOGGER = Logger.getLogger("com.jfx4test.framework.fxml.FxmlApplicationFixture");
-
+    private static final Logger LOGGER = Logger.getLogger(ApplicationFxmlFixture.class.getName());
 
     private final FxmlConfig fxmlSource;
     private final Callback<Class<?>, Object> controllerFactory;
@@ -33,7 +32,11 @@ public class ApplicationFxmlFixture extends ApplicationFixture {
         FXMLLoader loader = new FXMLLoader();
         loader.setControllerFactory(this.controllerFactory);
         try (InputStream fxmlStream = findFxmlResource().openStream()) {
-            stage.setScene(new Scene(loader.load(fxmlStream), this.fxmlSource.width(), this.fxmlSource.height()));
+            if (this.fxmlSource.validWithAndHeight()) {
+                stage.setScene(new Scene(loader.load(fxmlStream), this.fxmlSource.width(), this.fxmlSource.height()));
+            } else {
+                stage.setScene(new Scene(loader.load(fxmlStream)));
+            }
             stage.show();
         } catch (IOException exception) {
             if (exception.getCause() instanceof FxmlFactoryException factoryException) {
