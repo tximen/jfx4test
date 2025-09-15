@@ -355,6 +355,13 @@ public final class WaitForAsyncUtils {
         }
     }
 
+    public static void sleepSeconds(long duration) {
+        try {
+            Thread.sleep(TimeUnit.SECONDS.toMillis(duration));
+        } catch (InterruptedException ignore) {
+        }
+    }
+
     /**
      * Sleeps the current thread for the given duration.
      *
@@ -364,8 +371,7 @@ public final class WaitForAsyncUtils {
     public static void sleep(long duration, TimeUnit timeUnit) {
         try {
             Thread.sleep(timeUnit.toMillis(duration));
-        }
-        catch (InterruptedException ignore) {
+        } catch (InterruptedException ignore) {
         }
     }
 

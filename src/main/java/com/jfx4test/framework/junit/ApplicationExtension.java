@@ -49,9 +49,7 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
 
     private long findDelayInSeconds(Object testInstance) {
         Class<?> testClass = testInstance.getClass();
-        if (testClass.isAnnotationPresent(FxmlSource.class)) {
-            return testClass.getAnnotation(FxmlSource.class).delayInSeconds();
-        } else if (testClass.isAnnotationPresent(ApplicationTest.class)) {
+        if (testClass.isAnnotationPresent(ApplicationTest.class)) {
             return testClass.getAnnotation(ApplicationTest.class).delayInSeconds();
         } else {
             return -1L;
@@ -125,11 +123,6 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
 
     private Optional<FxmlConfig> findFxmlSource(Object testInstance) {
         Class<?> testClass = testInstance.getClass();
-        if (testClass.isAnnotationPresent(FxmlSource.class)) {
-            FxmlSource source = testClass.getAnnotation(FxmlSource.class);
-            LOGGER.fine("fxml source %s".formatted(source.value()));
-            return Optional.of(new FxmlConfig(source.value(),  source.stylesheet(), source.width(), source.height()));
-        } else
         if (testClass.isAnnotationPresent(ApplicationTest.class)) {
             ApplicationTest source = testClass.getAnnotation(ApplicationTest.class);
             if (source.value() == null || source.value().trim().isEmpty()) {

@@ -3,13 +3,11 @@ package com.jfx4test.framework.sample;
 import com.jfx4test.framework.api.FxRobot;
 import com.jfx4test.framework.junit.ApplicationExtension;
 import com.jfx4test.framework.junit.FxmlControllerFactory;
-import com.jfx4test.framework.junit.FxmlSource;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ApplicationExtension.class)
-@FxmlSource(value = "fxml/sample.fxml", stylesheet = "style/sample.css")
 public class SampleFxmlApp1Test {
 
     private final SampleController controller = new SampleController();
