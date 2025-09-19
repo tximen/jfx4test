@@ -27,6 +27,7 @@ public class LabelAssertionTest {
     @Test
     void sample_label() {
         FxAssertions.assertLabeledById("sample").hasText("unit test");
+
     }
 
 }

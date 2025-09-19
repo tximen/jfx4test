@@ -13,23 +13,36 @@ import java.util.Optional;
 public class FxAssertions {
 
     public static LabeledMatcher assertLabeledById(String labelID) {
-        Optional<Node> node = lookUpNodeById(labelID);
-        Assertions.assertThat(node.isPresent()).as(new NoSuchLabelSupplier(labelID)).isTrue();
-        Assertions.assertThat(node.get()).isInstanceOfAny(Labeled.class);
-        if (node.get() instanceof Labeled nodeLabel) {
+        Node node = findNodeById(labelID);
+        Assertions.assertThat(node).isInstanceOfAny(Labeled.class);
+        if (node instanceof Labeled nodeLabel) {
            return new LabeledMatcher(nodeLabel);
         } else {
            // this should not happen
-           throw new IllegalStateException("node %s is not an instanceof Labeled".formatted(node.get()));
+           throw new IllegalStateException("node %s is not an instanceof Labeled".formatted(node));
         }
     }
 
-    private static Optional<Node> lookUpNodeById(String labelID) {
+    public static void assertVisiblyById(String nodeID) {
+        Assertions.assertThat(findNodeById(nodeID).isVisible()).isTrue();
+    }
+
+    public static void assertNotVisiblyById(String nodeID) {
+        Assertions.assertThat(findNodeById(nodeID).isVisible()).isFalse();
+    }
+
+    private static Node findNodeById(String nodeID) {
+        Optional<Node> node = lookUpNodeById(nodeID);
+        Assertions.assertThat(node.isPresent()).as(new NoSuchLabelSupplier(nodeID)).isTrue();
+        return node.get();
+    }
+
+    private static Optional<Node> lookUpNodeById(String nodeID) {
         return FxApiFxApiContextHolder
                  .getInstance()
                  .getApiContext()
                  .nodeFinder()
-                 .lookup(new NodeIdPredicate(labelID))
+                 .lookup(new NodeIdPredicate(nodeID))
                  .query();
     }
 
