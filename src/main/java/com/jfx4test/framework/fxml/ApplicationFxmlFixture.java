@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class ApplicationFxmlFixture extends ApplicationFixture {
@@ -87,13 +88,44 @@ public class ApplicationFxmlFixture extends ApplicationFixture {
     }
 
     private URL findFxmlResource() {
-        URL resource =  this.testInstance.getClass().getClassLoader().getResource(this.fxmlSource.sourcePath());
-        if (resource == null) {
-            throw new FxmlSourceMissingException("no such fxml resource [%s]".formatted(this.fxmlSource.sourcePath()));
-        } else {
-            LOGGER.info("use fxml %s".formatted(resource.getFile()));
-            return resource;
+        Optional<URL> resource = findResource(this.fxmlSource.sourcePath());
+        if (resource.isPresent()) {
+            return resource.get();
         }
+        resource = findResource("/%s".formatted(this.fxmlSource.sourcePath()));
+        if (resource.isPresent()) {
+            return resource.get();
+        }
+        throw new FxmlSourceMissingException("no such fxml resource [%s]".formatted(this.fxmlSource.sourcePath()));
     }
 
+
+    private Optional<URL> findResource(String sourcePath) {
+        LOGGER.info(() -> "load %s by current thread".formatted(sourcePath));
+        URL resource = Thread.currentThread().getContextClassLoader().getResource(sourcePath);
+        if (resource != null) {
+            return Optional.of(resource);
+        }
+        LOGGER.info(() -> "load %s by system".formatted(sourcePath));
+        resource = ClassLoader.getSystemClassLoader().getResource(sourcePath);
+        if (resource != null) {
+            return Optional.of(resource);
+        }
+        LOGGER.info(() -> "load %s by platform".formatted(sourcePath));
+        resource = ClassLoader.getPlatformClassLoader().getResource(sourcePath);
+        if (resource != null) {
+            return Optional.of(resource);
+        }
+        LOGGER.info(() -> "load %s by %s".formatted(sourcePath,  this.testInstance.getClass().getName()));
+        resource = this.testInstance.getClass().getResource(sourcePath);
+        if (resource != null) {
+            return Optional.of(resource);
+        }
+        LOGGER.info(() -> "load %s by ApplicationFxmlFixture.class".formatted(sourcePath));
+        resource = ApplicationFxmlFixture.class.getResource(sourcePath);
+        if (resource != null) {
+            return Optional.of(resource);
+        }
+        return Optional.empty();
+    }
 }

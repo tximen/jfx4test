@@ -1,14 +1,16 @@
 package com.jfx4test.framework.sample;
 
 import com.jfx4test.framework.api.FxRobot;
-import com.jfx4test.framework.junit.ApplicationExtension;
+import com.jfx4test.framework.junit.ApplicationTest;
 import com.jfx4test.framework.junit.FxmlController;
 import com.jfx4test.framework.junit.Init;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(ApplicationExtension.class)
+/**
+ * controller field @FxmlController
+ */
+@ApplicationTest(value = "fxml/sample.fxml")
 public class SampleFxmlApp2Test {
 
     @FxmlController
