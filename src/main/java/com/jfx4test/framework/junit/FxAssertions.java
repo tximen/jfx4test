@@ -24,11 +24,15 @@ public class FxAssertions {
     }
 
     public static void assertVisiblyById(String nodeID) {
-        Assertions.assertThat(findNodeById(nodeID).isVisible()).isTrue();
+        Assertions.assertThat(findNodeById(nodeID).isVisible())
+                  .as(() -> "node [%s] should be visible".formatted(nodeID))
+                  .isTrue();
     }
 
     public static void assertNotVisiblyById(String nodeID) {
-        Assertions.assertThat(findNodeById(nodeID).isVisible()).isFalse();
+        Assertions.assertThat(findNodeById(nodeID).isVisible())
+                  .as(() -> "node [%s] should not be visible".formatted(nodeID))
+                   .isFalse();
     }
 
     private static Node findNodeById(String nodeID) {
