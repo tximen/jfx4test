@@ -1,24 +1,20 @@
 package com.jfx4test.framework.sample;
 
+
 import com.jfx4test.framework.api.FxRobot;
 import com.jfx4test.framework.junit.ApplicationTest;
 import com.jfx4test.framework.junit.FxmlControllerFactory;
-import javafx.util.Callback;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @ApplicationTest(value = "fxml/sample.fxml", delayInSeconds = 2)
-public class SampleFxmlApp4Test {
+public class SimpleFxmlApp5Test {
 
     private final SampleController controller = new SampleController();
 
     @FxmlControllerFactory
-    public Callback<Class<?>, Object> controllerFactory() {
-        return this::controller;
-    }
-
-
-    public Object controller(Class<?> reference) {
+    private Object controller(Class<?> reference) {
         if (SampleController.class.equals(reference)) {
             return this.controller;
         } else {

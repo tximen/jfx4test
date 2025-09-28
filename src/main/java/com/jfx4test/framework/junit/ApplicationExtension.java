@@ -156,14 +156,27 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
            Arrays.stream(testClass.getDeclaredMethods()).filter(this::controllerFactory).findFirst();
         if (factoryMethod.isPresent()) {
             Method caller = factoryMethod.get();
-            LOGGER.info("use factory %s".formatted(caller.getName()));
-            return new FxmlMethodControllerFactory(testInstance, caller);
+            if (factoryCallback(caller)) {
+                return createCallerByMethodCall(testInstance, caller);
+            } else {
+                LOGGER.info("use factory %s".formatted(caller.getName()));
+                return new FxmlMethodControllerFactory(testInstance, caller);
+            }
         } else {
             LOGGER.info("use default controller factory");
             return this::createInstance;
         }
     }
 
+    private Callback<Class<?>, Object> createCallerByMethodCall(Object testInstance, Method caller) {
+        try {
+            caller.setAccessible(true);
+            return (Callback<Class<?>, Object>) caller.invoke(testInstance);
+        } catch (InvocationTargetException | IllegalAccessException exception) {
+            LOGGER.log(Level.SEVERE, exception, () -> "invalid method %s".formatted(caller.getName()));
+            throw new IllegalStateException("invalid method %s".formatted(caller.getName()), exception);
+        }
+    }
 
     private boolean controllerField(Field field) {
         return field.isAnnotationPresent(FxmlController.class);
@@ -172,27 +185,24 @@ public class ApplicationExtension  extends FxRobot implements BeforeEachCallback
 
     private boolean controllerFactory(Method method) {
         return method.isAnnotationPresent(FxmlControllerFactory.class)
-            && factoryMethodValid(method);
-
+            && (factoryCallback(method) || factoryMethodValid(method));
     }
 
     private boolean controllerMethod(Method method) {
         return method.isAnnotationPresent(FxmlController.class);
     }
 
+    private boolean factoryCallback(Method method) {
+       Class<?> clazz =  method.getReturnType();
+       LOGGER.info(() -> "class %s".formatted(clazz));
+
+        return  Callback.class.isAssignableFrom(method.getReturnType())    ;
+    }
+
     private boolean factoryMethodValid(Method method) {
-        if (Object.class.equals(method.getReturnType())
+        return Object.class.equals(method.getReturnType())
             && method.getParameterCount() == 1
-            && Class.class.equals(method.getParameters()[0].getType())) {
-            return true;
-        } else {
-            throw new IllegalStateException("""
-                    invalid controller factory [%s %s(..)]
-                    -- proposal --
-                       Object %s(Class<?> reference) {
-                          ...
-                       }""".formatted(method.getReturnType().getSimpleName(), method.getName(), method.getName()));
-        }
+            && Class.class.equals(method.getParameters()[0].getType());
     }
 
     public Object createInstance(Class<?> refClass) {
